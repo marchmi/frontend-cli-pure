@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const requiredVersion = extractVersion(require('../package.json').engines.node);
-const currentVersion = extractVersion(process.version) // 移除 'v' 前缀
+const currentVersion = extractVersion(process.version); // 移除 'v' 前缀
 const pkgName = require('../package.json').name;
 /**
  * 检查Node版本是否符合要求
@@ -31,6 +31,19 @@ program
   .name('frontend')
   .description(description)
   .version(version)
+
+// 导入命令模块
+const createCommand = require('../lib/commands/create')
+
+// 注册命令
+createCommand(program)
+
+// 帮助信息增强
+program.on('--help', () => {
+  console.log()
+  console.log(`  💡 提示: 使用 ${chalk.cyan('frontend <command> --help')} 查看详细使用说明`)
+  console.log()
+})
 
 /**
  * 版本比较工具函数
@@ -83,3 +96,6 @@ function extractVersion(str) {
   const match = str.match(regex);
   return match ? match[0] : null;
 }
+
+// 解析命令行参数 输出帮助信息
+program.parse()
